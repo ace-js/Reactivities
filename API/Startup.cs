@@ -28,9 +28,17 @@ namespace API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddDbContext<DataContext>(opt => 
+            services.AddDbContext<DataContext>(opt =>
             {
                 opt.UseSqlite(Configuration.GetConnectionString("DefaultConnection"));
+            });
+            services.AddCors(opt =>
+            {
+                //Add Cors policy for local env client app
+                opt.AddPolicy("CorsPolicy", policy =>
+                {
+                    policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000");
+                });
             });
         }
 
@@ -42,8 +50,9 @@ namespace API
                 app.UseDeveloperExceptionPage();
             }
 
-           // app.UseHttpsRedirection();
-
+            // app.UseHttpsRedirection();
+            app.UseCors("CorsPolicy");
+            
             app.UseRouting();
 
             app.UseAuthorization();
