@@ -25,6 +25,7 @@ namespace API
                 {
                     var context = services.GetRequiredService<DataContext>();
                     context.Database.Migrate();// It'll create the db if it doesn't exist
+                    Seed.SeedData(context); // It'll populate our db (Class presents in Persistence proj)
                 }
                 catch (Exception ex)
                 {
