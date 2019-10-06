@@ -6,9 +6,14 @@ import { Item, Button, Label, Segment } from 'semantic-ui-react'
 interface IProps {
   activities: IActivity[]
   selectActivity: (id: string) => void
+  deleteActivity: (id: string) => void
 }
 
-const ActivityList: React.FC<IProps> = ({ activities, selectActivity }) => {
+const ActivityList: React.FC<IProps> = ({
+  activities,
+  selectActivity,
+  deleteActivity
+}) => {
   return (
     <Segment clearing>
       <Item.Group divided>
@@ -17,7 +22,7 @@ const ActivityList: React.FC<IProps> = ({ activities, selectActivity }) => {
             {/* <Item.Image size='tiny' src='/images/wireframe/image.png' /> */}
             <Item.Content>
               <Item.Header as='a'>{activity.title}</Item.Header>
-              <Item.Meta>{activity.date.toString()}</Item.Meta>
+              <Item.Meta>{activity.date}</Item.Meta>
               <Item.Description>
                 <div>
                   <div>{activity.description}</div>
@@ -28,11 +33,18 @@ const ActivityList: React.FC<IProps> = ({ activities, selectActivity }) => {
               </Item.Description>
               <Item.Extra>
                 <Button
+                  onClick={() => deleteActivity(activity.id)}
+                  floated='right'
+                  content='Delete'
+                  color='red'
+                />
+                <Button
                   onClick={() => selectActivity(activity.id)}
                   floated='right'
                   content='View'
                   color='blue'
                 />
+
                 <Label basic content={activity.category} />
               </Item.Extra>
             </Item.Content>

@@ -18,18 +18,51 @@ const App = () => {
     axios
       .get<IActivity[]>('http://localhost:5000/api/activities')
       .then(response => {
-        setActivities(response.data)
+        setActivities(
+          response.data.map(activity => ({
+            ...activity,
+            date: activity.date.split('.')[0]
+          }))
+        )
       })
   }, [])
 
   const onSelectActivityHandler = (id: string) => {
     const activity = activities.find(item => item.id === id)
-    if (activity) setSelectedActivity(activity)
+    if (activity) {
+      setSelectedActivity(activity)
+      setEditMode(false)
+    }
   }
 
   const onOpenCreateFormHandler = () => {
     setSelectedActivity(null)
     setEditMode(true)
+  }
+
+  const onCreateActivityHandler = (activity: IActivity) => {
+    setActivities([...activities, activity])
+    setEditMode(false)
+    setSelectedActivity(activity)
+  }
+
+  const onEditActitityHandler = (activity: IActivity) => {
+    const activityIndex = activities.findIndex(item => item.id === activity.id)
+    if (activityIndex !== -1) {
+      const activitiesCopy = [...activities]
+      activitiesCopy[activityIndex] = activity
+      setActivities(activitiesCopy)
+      setSelectedActivity(activity)
+      setEditMode(false)
+    }
+  }
+
+  const onDeleteActivityHandler = (id: string) => {
+    setActivities([...activities.filter(activity => activity.id !== id)])
+    if (selectedActivity && selectedActivity.id === id) {
+      setSelectedActivity(null)
+      setEditMode(false)
+    }
   }
 
   return (
@@ -43,6 +76,9 @@ const App = () => {
           editMode={editMode}
           setEditMode={setEditMode}
           setSelectedActivity={setSelectedActivity}
+          createActivity={onCreateActivityHandler}
+          editActivity={onEditActitityHandler}
+          deleteActivity={onDeleteActivityHandler}
         />
       </Container>
     </>
